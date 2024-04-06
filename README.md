@@ -11,4 +11,4 @@ It's deployed to a lambda function that stores the auctions in a DynamoDB table.
 ## Deployment
 
 1. `npm run build`
-2. Go to AWS Console > Lambda > auctionScrapper > Code > Upload from > .zip file
+2. Upload artifact in AWS Console > Lambda > auctionScrapper > Code > Upload from > .zip file
