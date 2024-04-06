@@ -1,1 +1,7 @@
-# auction-scrapper
+# Auction Scrapper
+
+![Auction Scrapper Diagram](/diagram/auction-scrapper-diagram.png)
+
+This project is a scraper that extracts information about public auctions from the BOE auction portal.
+
+It's deployed to a lambda function that stores the auctions in a DynamoDB table.
