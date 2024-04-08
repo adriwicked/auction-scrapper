@@ -9,8 +9,5 @@
     "zip": "zip -r build/auction_dep_pkg_$(date +'%d%m%y').zip index.mjs node_modules"
   },
   "author": "",
-  "license": "ISC",
-  "dependencies": {
-    "puppeteer": "^22.6.3"
-  }
+  "license": "ISC"
 }
