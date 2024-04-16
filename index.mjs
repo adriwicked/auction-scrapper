@@ -80,7 +80,8 @@ async function waitTableExists() {
   while (tableStatus !== "ACTIVE") {
     try {
       const command = new DescribeTableCommand({ TableName: TABLE_NAME });
-      response = await client.send(command);
+      const response = await client.send(command);
+      console.log("DescribeTableCommand response", response);
       tableStatus = response?.Table?.TableStatus;
     } catch (error) {
       console.error("Error describing table:", error);
