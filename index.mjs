@@ -1,26 +1,35 @@
 import {
   DeleteTableCommand,
   CreateTableCommand,
-  DescribeTableCommand,
   DynamoDBClient,
+  waitUntilTableNotExists,
+  waitUntilTableExists,
 } from "@aws-sdk/client-dynamodb";
 import { PutCommand, DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
 
 const client = new DynamoDBClient({ region: "eu-west-3" });
 const docClient = DynamoDBDocumentClient.from(client);
 const TABLE_NAME = "auction";
-const WAIT_TIME = 10;
+const MAX_WAIT_TIME = 25;
 
 export async function handler(event) {
   await deleteTable();
-  await wait(WAIT_TIME);
+  await waitUntilTableNotExists(
+    { client, maxWaitTime: MAX_WAIT_TIME },
+    { TableName: TABLE_NAME }
+  );
+  console.log("Table deleted");
 
   await createTable();
-  await waitTableExists();
+  await waitUntilTableExists(
+    { client, maxWaitTime: MAX_WAIT_TIME },
+    { TableName: TABLE_NAME }
+  );
+  console.log("Table created");
 
   const auctions = getAuctions();
   const response = await addAuctions(auctions);
-  console.log(response);
+  console.log("Auctions added: ", response);
   return response;
 }
 
@@ -28,10 +37,10 @@ async function deleteTable() {
   try {
     const command = new DeleteTableCommand({ TableName: TABLE_NAME });
     const response = await client.send(command);
-    console.log(response);
+    console.log("Deleting table: ", response);
     return response;
   } catch (error) {
-    console.error(error);
+    console.error("Error deleting table: ", error);
   }
 }
 
@@ -44,7 +53,7 @@ async function createTable() {
   });
 
   const response = await client.send(command);
-  console.log(response);
+  console.log("Creating table: ", response);
   return response;
 }
 
@@ -70,29 +79,6 @@ async function addAuction(auctionInfo) {
   const auction = Object.assign({}, auctionInfo, { id });
   const command = new PutCommand({ TableName: TABLE_NAME, Item: auction });
   const response = await docClient.send(command);
-  console.log(response);
+  console.log("Adding auction: ", response);
   return response;
-}
-
-async function waitTableExists() {
-  let tableStatus;
-
-  while (tableStatus !== "ACTIVE") {
-    try {
-      const command = new DescribeTableCommand({ TableName: TABLE_NAME });
-      const response = await client.send(command);
-      console.log("DescribeTableCommand response", response);
-      tableStatus = response?.Table?.TableStatus;
-    } catch (error) {
-      console.error("Error describing table:", error);
-    }
-  }
-}
-
-async function wait(seconds) {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      resolve();
-    }, seconds * 1000);
-  });
 }
