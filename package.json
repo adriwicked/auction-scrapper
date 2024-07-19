@@ -4,9 +4,7 @@
   "description": "",
   "main": "index.mjs",
   "scripts": {
-    "build": "npm i && npm run clean && npm run zip",
-    "clean": "rm -rf build && mkdir -p build",
-    "zip": "zip -r build/auction_dep_pkg_$(date +'%d%m%y').zip index.mjs node_modules"
+    "start": "node index.mjs"
   },
   "author": "",
   "license": "ISC"
